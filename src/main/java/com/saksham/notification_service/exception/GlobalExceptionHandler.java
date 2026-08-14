@@ -74,4 +74,13 @@ public class GlobalExceptionHandler {
                 .status(status)
                 .body(response);
     }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequest(
+            IllegalArgumentException exception) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
 }

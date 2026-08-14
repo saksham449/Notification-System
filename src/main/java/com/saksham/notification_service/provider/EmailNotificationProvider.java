@@ -18,13 +18,26 @@ public class EmailNotificationProvider implements NotificationProvider {
     }
 
     @Override
+    public String format(String title, String body) {
+
+        return """
+            <html>
+                <body>
+                    <h2>%s</h2>
+                    <p>%s</p>
+                </body>
+            </html>
+            """.formatted(title, body);
+    }
+    @Override
     public void send(User user, String title, String body) {
 
+        String formattedMessage = format(title, body);
+
         log.info(
-                "Mock EMAIL sent to {} | Title: {} | Body: {}",
+                "Mock EMAIL sent to {} | Content: {}",
                 user.getEmail(),
-                title,
-                body
+                formattedMessage
         );
     }
 }

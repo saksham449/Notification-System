@@ -18,13 +18,25 @@ public class SmsNotificationProvider implements NotificationProvider {
     }
 
     @Override
+    public String format(String title, String body) {
+
+        String message = title + ": " + body;
+
+        if (message.length() > 160) {
+            return message.substring(0, 157) + "...";
+        }
+
+        return message;
+    }
+    @Override
     public void send(User user, String title, String body) {
 
+        String formattedMessage = format(title, body);
+
         log.info(
-                "Mock SMS sent to {} | Title: {} | Body: {}",
+                "Mock SMS sent to {} | Message: {}",
                 user.getPhone(),
-                title,
-                body
+                formattedMessage
         );
     }
 }

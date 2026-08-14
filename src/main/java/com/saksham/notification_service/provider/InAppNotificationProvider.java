@@ -18,13 +18,25 @@ public class InAppNotificationProvider implements NotificationProvider {
     }
 
     @Override
+    public String format(String title, String body) {
+
+        return """
+            {
+                "title": "%s",
+                "body": "%s",
+                "type": "IN_APP"
+            }
+            """.formatted(title, body);
+    }
+    @Override
     public void send(User user, String title, String body) {
 
+        String formattedMessage = format(title, body);
+
         log.info(
-                "Mock IN_APP notification created for user {} | Title: {} | Body: {}",
+                "Mock IN_APP notification created for user {} | Content: {}",
                 user.getId(),
-                title,
-                body
+                formattedMessage
         );
     }
 }

@@ -18,13 +18,25 @@ public class PushNotificationProvider implements NotificationProvider {
     }
 
     @Override
+    public String format(String title, String body) {
+
+        if (body.length() > 100) {
+            return title + " - "
+                    + body.substring(0, 97)
+                    + "...";
+        }
+
+        return title + " - " + body;
+    }
+    @Override
     public void send(User user, String title, String body) {
 
+        String formattedMessage = format(title, body);
+
         log.info(
-                "Mock PUSH notification sent to device {} | Title: {} | Body: {}",
+                "Mock PUSH notification sent to device {} | Message: {}",
                 user.getDeviceToken(),
-                title,
-                body
+                formattedMessage
         );
     }
 }
