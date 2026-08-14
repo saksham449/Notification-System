@@ -281,4 +281,59 @@ class NotificationServiceTest {
 
         verifyNoInteractions(notificationHistoryRepository);
     }
+    @Test
+    void shouldRouteMultipleChannelsIndependently() {
+
+        // Arrange
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userPreferenceRepository.findByUserId(1L))
+                .thenReturn(Optional.of(preference));
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(1L)
+                        .title("Multi Channel")
+                        .body("Testing multiple channels")
+                        .channels(Set.of(
+                                NotificationChannel.EMAIL,
+                                NotificationChannel.SMS,
+                                NotificationChannel.PUSH
+                        ))
+                        .build();
+
+        // Act
+        NotificationResponse response =
+                notificationService.sendNotification(request);
+
+        // Assert
+        assertThat(response.getResults())
+                .hasSize(3);
+
+        assertThat(response.getResults())
+                .extracting(NotificationResult::getStatus)
+                .containsExactlyInAnyOrder(
+                        DeliveryStatus.SUCCESS,
+                        DeliveryStatus.SKIPPED,
+                        DeliveryStatus.SUCCESS
+                );
+
+        verify(emailProvider)
+                .send(
+                        user,
+                        "Multi Channel",
+                        "Testing multiple channels"
+                );
+
+        verify(pushProvider)
+                .send(
+                        user,
+                        "Multi Channel",
+                        "Testing multiple channels"
+                );
+
+        verify(smsProvider, never())
+                .send(any(), anyString(), anyString());
+    }
 }
