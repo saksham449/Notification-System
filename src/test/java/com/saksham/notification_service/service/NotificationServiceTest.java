@@ -179,4 +179,54 @@ class NotificationServiceTest {
         verify(notificationHistoryRepository)
                 .save(any());
     }
+    @Test
+    void shouldMarkNotificationAsFailedWhenProviderThrowsException() {
+
+        // Arrange
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userPreferenceRepository.findByUserId(1L))
+                .thenReturn(Optional.of(preference));
+
+        doThrow(new RuntimeException("Email service unavailable"))
+                .when(emailProvider)
+                .send(
+                        any(User.class),
+                        anyString(),
+                        anyString()
+                );
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(1L)
+                        .title("Important")
+                        .body("Something went wrong")
+                        .channels(Set.of(NotificationChannel.EMAIL))
+                        .build();
+
+        // Act
+        NotificationResponse response =
+                notificationService.sendNotification(request);
+
+        // Assert
+        NotificationResult result =
+                response.getResults().get(0);
+
+        assertThat(result.getStatus())
+                .isEqualTo(DeliveryStatus.FAILED);
+
+        assertThat(result.getMessage())
+                .isEqualTo("Notification dispatch failed");
+
+        verify(emailProvider)
+                .send(
+                        user,
+                        "Important",
+                        "Something went wrong"
+                );
+
+        verify(notificationHistoryRepository)
+                .save(any());
+    }
 }
