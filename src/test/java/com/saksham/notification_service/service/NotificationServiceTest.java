@@ -229,4 +229,30 @@ class NotificationServiceTest {
         verify(notificationHistoryRepository)
                 .save(any());
     }
+    @Test
+    void shouldThrowExceptionWhenUserDoesNotExist() {
+
+        // Arrange
+        when(userRepository.findById(999L))
+                .thenReturn(Optional.empty());
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(999L)
+                        .title("Test")
+                        .body("Test body")
+                        .channels(Set.of(NotificationChannel.EMAIL))
+                        .build();
+
+        // Act + Assert
+        assertThrows(
+                UserNotFoundException.class,
+                () -> notificationService.sendNotification(request)
+        );
+
+        verify(userPreferenceRepository, never())
+                .findByUserId(anyLong());
+
+        verifyNoInteractions(notificationHistoryRepository);
+    }
 }
