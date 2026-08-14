@@ -255,4 +255,30 @@ class NotificationServiceTest {
 
         verifyNoInteractions(notificationHistoryRepository);
     }
+    @Test
+    void shouldThrowExceptionWhenPreferencesDoNotExist() {
+
+        // Arrange
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userPreferenceRepository.findByUserId(1L))
+                .thenReturn(Optional.empty());
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(1L)
+                        .title("Test")
+                        .body("Test body")
+                        .channels(Set.of(NotificationChannel.EMAIL))
+                        .build();
+
+        // Act + Assert
+        assertThrows(
+                UserPreferenceNotFoundException.class,
+                () -> notificationService.sendNotification(request)
+        );
+
+        verifyNoInteractions(notificationHistoryRepository);
+    }
 }
