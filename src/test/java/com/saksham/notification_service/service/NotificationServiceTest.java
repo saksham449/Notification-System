@@ -140,4 +140,43 @@ class NotificationServiceTest {
         verify(notificationHistoryRepository)
                 .save(any());
     }
+    @Test
+    void shouldSendEmailWhenUserHasOptedIn() {
+
+        // Arrange
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userPreferenceRepository.findByUserId(1L))
+                .thenReturn(Optional.of(preference));
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(1L)
+                        .title("Welcome")
+                        .body("Welcome to our platform")
+                        .channels(Set.of(NotificationChannel.EMAIL))
+                        .build();
+
+        // Act
+        NotificationResponse response =
+                notificationService.sendNotification(request);
+
+        // Assert
+        NotificationResult result =
+                response.getResults().get(0);
+
+        assertThat(result.getStatus())
+                .isEqualTo(DeliveryStatus.SUCCESS);
+
+        verify(emailProvider)
+                .send(
+                        user,
+                        "Welcome",
+                        "Welcome to our platform"
+                );
+
+        verify(notificationHistoryRepository)
+                .save(any());
+    }
 }
