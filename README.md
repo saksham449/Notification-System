@@ -1,5 +1,4 @@
 # Notification-System
-# Notification Service
 
 A Spring Boot REST API for managing users, notification preferences, sending notifications through multiple channels, and maintaining notification delivery history.
 
