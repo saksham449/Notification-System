@@ -102,4 +102,42 @@ class NotificationServiceTest {
                 .inAppEnabled(true)
                 .build();
     }
+    @Test
+    void shouldSkipSmsWhenUserHasOptedOut() {
+
+        // Arrange
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(user));
+
+        when(userPreferenceRepository.findByUserId(1L))
+                .thenReturn(Optional.of(preference));
+
+        NotificationRequest request =
+                NotificationRequest.builder()
+                        .userId(1L)
+                        .title("Test Notification")
+                        .body("This is a test message")
+                        .channels(Set.of(NotificationChannel.SMS))
+                        .build();
+
+        // Act
+        NotificationResponse response =
+                notificationService.sendNotification(request);
+
+        // Assert
+        NotificationResult result =
+                response.getResults().get(0);
+
+        assertThat(result.getChannel())
+                .isEqualTo(NotificationChannel.SMS);
+
+        assertThat(result.getStatus())
+                .isEqualTo(DeliveryStatus.SKIPPED);
+
+        verify(smsProvider, never())
+                .send(any(), anyString(), anyString());
+
+        verify(notificationHistoryRepository)
+                .save(any());
+    }
 }
