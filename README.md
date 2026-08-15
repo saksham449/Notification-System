@@ -879,3 +879,8 @@ The architecture is intentionally modular so that notification providers can be 
 - Add **JWT authentication & authorization**
 - Add **Docker + CI/CD**
 - Add **monitoring and observability**
+
+## Documentation
+
+📄 **[Product Development Roadmap](https://docs.google.com/document/d/10To1D78Ue7th_UlRmdbiXIeC_h11B3I7ghdiTRvcTfM/edit?usp=sharing)**  
+Detailed walkthrough of the project's development from scratch, including architecture, implementation phases, testing, and future improvements.
