@@ -863,3 +863,19 @@ View Notification History
 ```
 
 The architecture is intentionally modular so that notification providers can be replaced or extended without significantly changing the core business logic.
+
+## Scalability Considerations
+
+- **Provider abstraction** — allows notification channels to be scaled or replaced independently.
+- **Async processing** — Kafka can be introduced for high-volume notifications.
+- **Database optimization** — indexing, pagination, and connection pooling can handle growing data.
+- **Caching** — Redis can reduce repeated database lookups.
+
+## Future Improvements
+
+- Integrate real **Email, SMS, Push, and In-App providers**
+- Add **Kafka** for asynchronous notification processing
+- Add **Redis caching**
+- Add **JWT authentication & authorization**
+- Add **Docker + CI/CD**
+- Add **monitoring and observability**
