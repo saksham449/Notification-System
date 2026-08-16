@@ -261,7 +261,15 @@ Application-specific exceptions are used for cases such as:
 `GlobalExceptionHandler` provides centralized handling of application errors so controllers do not need to contain repetitive exception-handling code.
 
 ---
+### Business Logic
 
+<p align="left">
+  <img src="docs/Business_Logic.png"
+       alt="Notification Service Business Logic"
+       width="350">
+</p>
+
+---
 ## Notification Processing Flow
 
 When a notification is requested:
